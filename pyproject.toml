@@ -1,0 +1,19 @@
+[project]
+name = "teletransformer"
+version = "0.1.0"
+description = "Python Transformer for Call Details Records ( CDRs ) from Brazilian Telecommunications Carriers"
+readme = "README.md"
+authors = [
+    { name = "Maxwel de Souza Freitas", email = "maxwel@maxwelfreitas.com.br" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "flatdict>=4.0.1",
+]
+
+[project.scripts]
+teletransformer = "teletransformer:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
