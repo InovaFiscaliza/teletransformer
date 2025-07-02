@@ -1,0 +1,37 @@
+# parâmetros gerais do programa
+[global]
+client_n_workers = 24
+client_threads_per_worker = 1
+client_dashboard_address = ":8888"
+
+# parâmetros gerais de leitura dos cdr por tecnologia
+# usecols -> indica as colunas que deve ser lidas, com índice 0
+
+[cdr]
+
+[cdr.ericsson]
+delimiter = ";"
+header = true
+usecols = [1, 2, 3, 4, 9, 11]
+names = ["number_a", "date", "time", "record_type", "number_b", "duration"]
+
+[cdr.nokia]
+delimiter = ";"
+header = true
+usecols = [0, 1, 3, 8, 15]
+names = ["record_type", "number_a", "date_time", "number_b", "duration"]
+
+[cdr.vivo]
+[cdr.vivo.volte]
+delimiter = "|"
+header = false
+usecols = [0, 2, 7, 12, 13, 31]
+names = ["record_type", "number_a", "number_b", "duration", "date", "time"]
+
+[cdr.tim]
+[cdr.tim.volte]
+delimiter = ";"
+header = true
+usecols = [0, 1, 2, 3, 4, 7]
+names = ["number_a", "date", "time", "record_type", "number_b", "duration"]
+encoding = "latin1"
