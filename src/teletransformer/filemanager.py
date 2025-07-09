@@ -8,7 +8,7 @@ import flatdict
 logger = logging.getLogger(__name__)
 
 GLOBAL_CONFIG_REQUIRED_KEYS = set(["client_n_workers", "client_threads_per_worker"])
-CDR_CONFIG_REQUIRED_KEYS = set(["delimiter", "header", "usecols", "names"])
+CDR_CONFIG_REQUIRED_KEYS = set(["delimiter", "skiprows", "usecols", "names"])
 
 
 class CDRTransformerFileManager:
@@ -28,9 +28,9 @@ class CDRTransformerFileManager:
             for provider_path in self.providers_paths:
                 path = provider_path["path"]
                 file_count = f"{provider_path['file_count']:,d}".replace(",", ".")
-                file_type = provider_path["file_type"]
+                file_suffix = provider_path["file_suffix"]
                 logger.info(
-                    f"  {path}, found {file_count} files with suffix {file_type}."
+                    f"  {path}, found {file_count} files with suffix {file_suffix}."
                 )
 
     @staticmethod
@@ -156,9 +156,9 @@ class CDRTransformerFileManager:
                                 "provider": provider,
                                 "vendor": vendor,
                                 "config": dict(path_config),
-                                "file_type": file_type,
+                                "file_suffix": file_type,
                                 "file_count": file_count,
-                                "files": files,
+                                # "files": files, 
                             }
                         )
 

@@ -4,11 +4,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from teletransformer.filemanager import CDRTransformerFileManager
+from teletransformer.transformer import DaskTransformer
 
 # default values for development purposes only
 DEFAULT_CONFIG_FILE = Path(__file__).parents[2] / "tests/teletransformer.toml"
-DEFAULT_SOURCE_PATH = "/data/cdr/cdr_processado/Semana42"
-DEFAULT_OUTPUT_PATH = "/data/cdr/cdr_transformado"
+DEFAULT_SOURCE_PATH = "/data/cdr/cdr_processado/Amostra/claro/ericsson"
+DEFAULT_OUTPUT_PATH = "/data/cdr/cdr_processado/Amostra/transformado"
 
 
 # Configure logging
@@ -21,6 +22,8 @@ def setup_logging(output_path: Path, log_level: int = logging.INFO):
     # Create a timestamped log file name
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     log_file = logs_dir / f"teletransformer_{timestamp}.log"
+    # keep log in a single file. for development purposes only
+    log_file = logs_dir / "teletransformer.log"
 
     # Configure root logger
     logger = logging.getLogger("teletransformer")
@@ -45,6 +48,9 @@ def setup_logging(output_path: Path, log_level: int = logging.INFO):
     # Add handlers to logger
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
+
+    # Capture warnings to the logging system
+    logging.captureWarnings(True)
 
     logger.info(f"Logging initialized. Log file: {log_file}")
     return logger
@@ -94,16 +100,47 @@ def main():
     global logger
     logger = setup_logging(output_path, logging.INFO)
 
-    logger.info(
-        f"Starting teletransformer with arguments:\n  config file: {config_file}\n  input: {input_path}\n  output: {output_path}"
-    )
-
+    logger.info("Starting teletransformer with arguments:")
+    logger.info(f"  config_file: {config_file}")
+    logger.info(f"  input_path: {input_path}")
+    logger.info(f"  output_path: {output_path}")
 
     manager = CDRTransformerFileManager(
         config_file=config_file, input_path=input_path, output_path=output_path
     )
 
-    print(manager)
+    transformer = DaskTransformer()
+    for provider_path in manager.providers_paths:
+        transformer.transform(provider_path, output_path)
+
+
+
+def transform(config_file, input_path, output_path):
+
+    config_file = Path(config_file)
+    input_path = Path(input_path)
+    output_path = Path(output_path)
+
+    setup_logging(output_path, logging.INFO)
+
+    ####
+    #### Rever essa parte
+    # Set up logging to file only
+    global logger
+    logger = setup_logging(output_path, logging.INFO)
+
+    logger.info("Starting teletransformer with arguments:")
+    logger.info(f"  config_file: {config_file}")
+    logger.info(f"  input_path: {input_path}")
+    logger.info(f"  output_path: {output_path}")
+
+    manager = CDRTransformerFileManager(
+        config_file=config_file, input_path=input_path, output_path=output_path
+    )
+
+    transformer = DaskTransformer()
+    for provider_path in manager.providers_paths:
+        transformer.transform(provider_path, output_path)
 
 
 if __name__ == "__main__":
