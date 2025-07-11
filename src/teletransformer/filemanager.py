@@ -8,17 +8,35 @@ import flatdict
 logger = logging.getLogger(__name__)
 
 GLOBAL_CONFIG_REQUIRED_KEYS = set(["client_n_workers", "client_threads_per_worker"])
-CDR_CONFIG_REQUIRED_KEYS = set(["delimiter", "skiprows", "usecols", "names"])
+CDR_CONFIG_REQUIRED_KEYS = set(["description"])
 
 
 class CDRTransformerFileManager:
     def __init__(self, config_file: Path, input_path: Path, output_path: Path):
-        self.config_file = config_file
-        self.input_path = input_path
-        self.output_path = output_path
+        self.config_file = Path(config_file)
+        self.input_path = Path(input_path)
+        self.output_path = Path(output_path)
         self.setup()
 
     def setup(self):
+        if not all(
+            [
+                self.config_file.exists(),
+                self.input_path.exists(),
+            ]
+        ):
+            logger.error(
+                f"One or more of the `{self.config_file}`, `{self.input_path}` paths do not exist. Please provide valid paths."
+            )
+            raise FileNotFoundError(
+                f"One or more of the `{self.config_file}`, `{self.input_path}` paths do not exist. Please provide valid paths."
+            )
+        
+        if not self.output_path.exists():
+            self.output_path.mkdir(parents=True, exist_ok=True)
+            logger.info(f"Created output path: {self.output_path}")
+
+
         self.config = CDRTransformerFileManager.load_config(self.config_file)
         self.providers_paths = CDRTransformerFileManager.get_providers_paths(
             self.input_path, self.config
@@ -47,10 +65,18 @@ class CDRTransformerFileManager:
         flatconfig = flatdict.FlatDict(config)
 
         global_sections = set(
-            [key.rsplit(":", 1)[0] for key in flatconfig.keys() if key.startswith("global:")]
+            [
+                key.rsplit(":", 1)[0]
+                for key in flatconfig.keys()
+                if key.startswith("global:")
+            ]
         )
         cdr_sections = set(
-            [key.rsplit(":", 1)[0] for key in flatconfig.keys() if key.startswith("cdr:")]
+            [
+                key.rsplit(":", 1)[0]
+                for key in flatconfig.keys()
+                if key.startswith("cdr:")
+            ]
         )
 
         for section in global_sections:
@@ -158,7 +184,7 @@ class CDRTransformerFileManager:
                                 "config": dict(path_config),
                                 "file_suffix": file_type,
                                 "file_count": file_count,
-                                # "files": files, 
+                                # "files": files,
                             }
                         )
 
