@@ -61,3 +61,18 @@ NOKIA_RECORD_COLUMNS = [
     "QT_TEMPO_CONVERSACAO",
     "CO_REFERENCIA",
 ]
+
+TIM_VOLTE_TEXT_COLUMNS_TO_READ = {
+    "TipodeCDR(role-of-Node)": "SG_TIPO_CDR",
+    "interOperatorIdentifiers": "CO_BILHETADOR",
+    "Data(recordOpeningTime)": "DT_CHAMADA",
+    "Hora": "HORA_CHAMADA",
+    "IMSI(List-of-Subscription-ID)": "NU_IMSI",
+    "Célula(accessNetworkInformation)": "CO_CGI_CELULA",
+    "Originador(list-Of-Calling-Party-Address)": "NU_ORIGEM",
+    "called-Party-Address(NúmeroChamado)": "NU_DESTINO",
+    "dialled-Party-Address(NúmeroTeclado)": "NU_DIGITADO",
+    "IMEI(private-User-Equipment-Info)": "NU_IMEI",
+    "Duration": "QT_TEMPO_CONVERSACAO",
+    "network-Call-Reference": "CO_REFERENCIA",
+}

@@ -8,6 +8,7 @@ from dask.distributed import Client, LocalCluster
 
 import teletransformer.extractors.ericsson as ericsson
 import teletransformer.extractors.nokia as nokia
+import teletransformer.extractors.timvolte as timvolte
 
 # from teletransformer.preprocessing import extract_normalized_numbers
 
@@ -23,7 +24,7 @@ CHARGEABLE_DURATION_COLUMN = "QT_TEMPO_CONVERSACAO"
 EXTRACTORS = {
     "ericsson": ericsson,
     "nokia": nokia,
-    "tim:volte": None,
+    "tim:volte": timvolte,
     "vivo:volte": None,
 }
 
@@ -86,7 +87,7 @@ class CDRTransformer:
         working_path = output_path / ".working"
 
         logger.info(f"Started reading {input_files} files...")
-        extracted_file = CDRTransformer._extract_cdr(provider_path, input_files, working_path)
+        extracted_file = CDRTransformer._extract_cdr(provider_path, working_path)
 
         logger.info(f"Input files saved sucessfuly to {extracted_file}")
 
